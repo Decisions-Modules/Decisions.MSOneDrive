@@ -10,66 +10,96 @@ namespace Decisions.MSOneDrive
 {
     public static class ModuleUtility
     {
+        private static OneDriveBaseResult ProcessRequest(System.Action action)
+        {
+            var result = new OneDriveBaseResult();
+            try
+            {
+                action();
+                result.IsSucceed = true;
+            }
+            catch (Exception exception)
+            {
+                if (!result.FillFromException(exception))
+                    throw;
+            }
+            return result;
+        }
+
+        private static OneDriveResultWithData<T> ProcessRequest<T>(System.Func<T> req)
+        {
+            var result = new OneDriveResultWithData<T>();
+            try
+            {
+                result.Data = req();
+                result.IsSucceed = true;
+            }
+            catch (Exception exception)
+            {
+                if (!result.FillFromException(exception))
+                    throw;
+            }
+            return result;
+        }
+
         public static OneDriveResultWithData<OneDriveResourceType> DoesResourceExist(GraphServiceClient connection, string fileOrFolderId)
         {
-
-            var rawResult = CoreUtility.GetResourceInfo(connection, fileOrFolderId);
-            var result = new OneDriveResultWithData<OneDriveResourceType>(rawResult);
-
-            if (rawResult.IsSucceed)
+            OneDriveResultWithData<OneDriveResourceType> result = ProcessRequest(() =>
             {
-                if (rawResult.Data.Folder != null) 
-                    result.Data=OneDriveResourceType.Folder;
-                else 
-                    result.Data = OneDriveResourceType.File;
-            }
-            else
-            if (rawResult.ErrorInfo.HttpErrorCode == HttpStatusCode.NotFound)
+                DriveItem item = CoreUtility.GetResourceInfo(connection, fileOrFolderId);
+                if (item.Folder != null)
+                    return OneDriveResourceType.Folder;
+                else
+                    return OneDriveResourceType.File;
+            });
+
+            if (!result.IsSucceed && result.ErrorInfo.HttpErrorCode == HttpStatusCode.NotFound)
             {
                 result.Data = OneDriveResourceType.Unavailable;
                 result.IsSucceed = true;
             };
-
             return result;
         }
 
         public static OneDriveBaseResult DeleteResource(GraphServiceClient connection, string fileOrFolderId)
         {
-            return CoreUtility.DeleteFilebyID(connection, fileOrFolderId);
+            return ProcessRequest(() =>
+            {
+                CoreUtility.DeleteFilebyID(connection, fileOrFolderId);
+            });
         }
 
         public static OneDriveResultWithData<OneDriveFile[]> GetFiles(GraphServiceClient connection, string folderId)
         {
-            var rawList = CoreUtility.ListFolderFromId(connection, folderId, ItemType.File);
-            var result = new OneDriveResultWithData<OneDriveFile[]>(rawList);
-            if (rawList.IsSucceed)
+            OneDriveResultWithData<OneDriveFile[]> result = ProcessRequest(() =>
             {
-                var list = rawList.Data.Select((it) => { return new OneDriveFile(it); });
-                result.Data = list.ToArray();
-            }
+                var rawList = CoreUtility.ListFolderFromId(connection, folderId, ItemType.File);
+                var list = rawList.Select((it) => { return new OneDriveFile(it); });
+                return list.ToArray();
+            });
 
             return result;
         }
 
         public static OneDriveResultWithData<OneDriveFolder[]> GetFolders(GraphServiceClient connection, string folderId)
         {
-            var rawList = CoreUtility.ListFolderFromId(connection, folderId, ItemType.Folder);
-            var result = new OneDriveResultWithData<OneDriveFolder[]>(rawList);
-            if (rawList.IsSucceed)
+            OneDriveResultWithData<OneDriveFolder[]> result = ProcessRequest(() =>
             {
-                var list = rawList.Data.Select((it) => { return new OneDriveFolder(it); });
-                result.Data = list.ToArray();
-            }
-            return result;
+                var rawList = CoreUtility.ListFolderFromId(connection, folderId, ItemType.Folder);
+                var list = rawList.Select((it) => { return new OneDriveFolder(it); });
+                return list.ToArray();
+            });
 
+            return result;
         }
 
         public static OneDriveResultWithData<OneDriveFolder> CreateFolder(GraphServiceClient connection, string newFoldeName, string parentFolderId)
         {
-            var rawResult = CoreUtility.CreateFolder(connection, newFoldeName, parentFolderId);
-            var result = new OneDriveResultWithData<OneDriveFolder>(rawResult);
-            if (rawResult.IsSucceed)
-                result.Data = new OneDriveFolder(rawResult.Data);
+            OneDriveResultWithData<OneDriveFolder> result = ProcessRequest(() =>
+            {
+                var item = CoreUtility.CreateFolder(connection, newFoldeName, parentFolderId);
+                return new OneDriveFolder(item);
+            });
             return result;
         }
 

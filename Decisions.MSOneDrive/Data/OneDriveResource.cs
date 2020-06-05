@@ -24,16 +24,16 @@ namespace Decisions.MSOneDrive
             Description = desc;
             SharingLink = link;
         }
-        internal OneDriveResource(DriveItem driveItem): this(driveItem.Id, driveItem.Name, driveItem.Description, driveItem.WebUrl){ }
+        internal OneDriveResource(DriveItem driveItem) : this(driveItem.Id, driveItem.Name, driveItem.Description, driveItem.WebUrl) { }
 
         [DataMember]
-        public readonly string Id;
+        public string Id { get; }
         [DataMember]
-        public readonly string Name;
+        public string Name { get; }
         [DataMember]
-        public readonly string Description;
+        public string Description { get; }
         [DataMember]
-        public readonly string SharingLink;
+        public string SharingLink { get; }
 
     }
 

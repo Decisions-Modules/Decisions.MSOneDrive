@@ -45,7 +45,7 @@ namespace Decisons.MSOneDrive.TestSuite
                 catch (MsalUiRequiredException)
                 {
                     result = IdentityClientApp.AcquireTokenInteractive(Scopes)
-                                .ExecuteAsync().Result; ;
+                                .ExecuteAsync().Result;
                 }
 
                 graphClient = AuthenticationHelper.GetAuthenticatedClient(result.AccessToken);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Decisions.MSOneDrive
 {
     [DataContract]
-    public class GoogleDriveErrorInfo
+    public class OneDriveErrorInfo
     {
         [DataMember] public string ErrorMessage { get; set; }
         [DataMember] public HttpStatusCode? HttpErrorCode { get; set; }
@@ -19,13 +19,13 @@ namespace Decisions.MSOneDrive
     public class OneDriveBaseResult
     {
         public bool IsSucceed;
-        public GoogleDriveErrorInfo ErrorInfo = new GoogleDriveErrorInfo();
+        public OneDriveErrorInfo ErrorInfo = new OneDriveErrorInfo();
         public virtual object DataObj { get { return null; } }
 
         public bool FillFromException(Exception exception)
         {
             IsSucceed = false;
-            ErrorInfo = new GoogleDriveErrorInfo();
+            ErrorInfo = new OneDriveErrorInfo();
             if (exception is AggregateException)
             { 
                 var ex = (AggregateException)exception;

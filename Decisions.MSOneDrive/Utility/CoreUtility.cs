@@ -1,7 +1,4 @@
-﻿// ------------------------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
-// ------------------------------------------------------------------------------
-using Microsoft.Graph;
+﻿using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace Decisions.MSOneDrive
 {
-  /*  public class ResultItem
-    {
-        public Microsoft.Graph.DriveItem[] ChildrenItems;
-        public Microsoft.Graph.DriveItem ParentFolder;
-    }*/
-
     public enum ClientType
     {
         Consumer,
@@ -36,34 +27,18 @@ namespace Decisions.MSOneDrive
 
         private static void CheckConnectionOrException(GraphServiceClient connection)
         {
-            if (connection==null)
+            if (connection == null)
                 throw new ArgumentNullException("connection", "GraphServiceClient object cannot be null");
         }
 
-        private static OneDriveResultWithData<DriveItem>  ExecuteRequest(IDriveItemRequest request)
-        {
-            var result = new OneDriveResultWithData<DriveItem>();
-            try
-            {
-                result.Data = request.GetAsync().Result;
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
-            return result;
-        }
-
-        public static OneDriveResultWithData<DriveItem> GetResourceInfo(GraphServiceClient connection, string id)
+        public static DriveItem GetResourceInfo(GraphServiceClient connection, string id)
         {
             CheckConnectionOrException(connection);
-            var req = connection.Drive.Items[id].Request();
-            return ExecuteRequest(req);
+            var request = connection.Drive.Items[id].Request();
+            return request.GetAsync().Result;
         }
 
-        public static OneDriveResultWithData<DriveItem[]> ListFolderFromId(GraphServiceClient connection, string id, ItemType type=ItemType.All, ClientType clientType=ClientType.Consumer)
+        public static DriveItem[] ListFolderFromId(GraphServiceClient connection, string id, ItemType type = ItemType.All, ClientType clientType = ClientType.Consumer)
         {
             CheckConnectionOrException(connection);
 
@@ -71,26 +46,15 @@ namespace Decisions.MSOneDrive
                 ? "thumbnails,children($expand=thumbnails)"
                 : "thumbnails,children";
 
-            var result = new OneDriveResultWithData<DriveItem[]>();
-            try
-            {
-                DriveItem folder;
-                IDriveItemRequest req;
-                if (id == null)
-                    req = connection.Drive.Root.Request().Expand(expandValue);
-                else
-                    req = connection.Drive.Items[id].Request().Expand(expandValue);
-                folder = req.GetAsync().Result;
+            DriveItem folder;
+            IDriveItemRequest req;
+            if (id == null)
+                req = connection.Drive.Root.Request().Expand(expandValue);
+            else
+                req = connection.Drive.Items[id].Request().Expand(expandValue);
+            folder = req.GetAsync().Result;
 
-                result.Data = ProcessFolder(folder, type); ;
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
-            return result;
+            return ProcessFolder(folder, type); ;
         }
 
         /*       public static ResultItem ListFolderFromPath(GraphServiceClient Connection, string path = null, ItemType type = ItemType.All, ClientType clientType = ClientType.Consumer)
@@ -138,62 +102,27 @@ namespace Decisions.MSOneDrive
 
         private static DriveItem[] ProcessFolder(DriveItem folder, ItemType type = ItemType.All)
         {
-            if (folder != null)
+            if (folder.Folder != null && folder.Children.CurrentPage != null)
             {
-                if (folder.Folder != null && folder.Children.CurrentPage != null)
+                var items = folder.Children.CurrentPage;
+
+                if (type == ItemType.File)
                 {
-                    var items = folder.Children.CurrentPage;
-                    int nLength = items.Count, i = 0, nCount = 0;
-                    Microsoft.Graph.DriveItem[] CurrentItems = null;
-                    if (type == ItemType.All)
-                    {
-                        CurrentItems = new Microsoft.Graph.DriveItem[nLength];
-                        foreach (var obj in items)
-                        {
-                            CurrentItems[i++] = obj;
-                        }
-                    }
-                    else if (type == ItemType.File)
-                    {
-                        nCount = i = 0;
-                        foreach (var obj in items)
-                        {
-                            if (obj.Folder != null)
-                                continue;
-                            nCount++;
-                        }
-                        CurrentItems = new Microsoft.Graph.DriveItem[nCount];
-                        foreach (var obj in items)
-                        {
-                            if (obj.Folder != null)
-                                continue;
-                            CurrentItems[i++] = obj;
-                        }
-                    }
-                    else if (type == ItemType.Folder)
-                    {
-                        nCount = i = 0;
-                        foreach (var obj in items)
-                        {
-                            if (obj.Folder == null)
-                                continue;
-                            nCount++;
-                        }
-                        CurrentItems = new Microsoft.Graph.DriveItem[nCount];
-                        foreach (var obj in items)
-                        {
-                            if (obj.Folder == null)
-                                continue;
-                            CurrentItems[i++] = obj;
-                        }
-                    }
-                    return CurrentItems;
+                    var res = items.Where((it) => { return it.Folder == null; });
+                    return res.ToArray();
                 }
+                else if (type == ItemType.Folder)
+                {
+                    var res = items.Where((it) => { return it.Folder != null; });
+                    return res.ToArray();
+                }
+                return items.ToArray();
             }
-            return null;
+            return new DriveItem[]{ };
+
         }
 
-        public static OneDriveResultWithData<DriveItem> CreateFolder(GraphServiceClient connection, string newFoldeName, string parentFolderId)
+        public static DriveItem CreateFolder(GraphServiceClient connection, string newFoldeName, string parentFolderId)
         {
             CheckConnectionOrException(connection);
             if (String.IsNullOrEmpty(newFoldeName))
@@ -207,45 +136,35 @@ namespace Decisions.MSOneDrive
 
             IDriveItemChildrenCollectionRequest request;
             if (parentFolderId == null)
-                request = connection.Me.Drive.Root.Children.Request();
+                request = connection.Drive.Root.Children.Request(); //connection.Me.Drive.Root.Children.Request();
             else
                 request = connection.Drive.Items[parentFolderId].Children.Request();
 
-            var result = new OneDriveResultWithData<DriveItem>();
-            try
-            {
-                result.Data = request.AddAsync(driveItem).Result;
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
+            var result = request.AddAsync(driveItem).Result;
             return result;
         }
 
-    /*    public static Microsoft.Graph.DriveItem UploadFilebyPath(GraphServiceClient Connection, string targetFolder, string uploadFileName)
-        {
-            CheckConnectionOrException(connection);
-
-            string folderPath = targetFolder;
-
-            var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(uploadFileName));
-
-            try
+        /*    public static Microsoft.Graph.DriveItem UploadFilebyPath(GraphServiceClient Connection, string targetFolder, string uploadFileName)
             {
-                var stream = new System.IO.FileStream(uploadFileName, System.IO.FileMode.Open);
-                Task<Microsoft.Graph.DriveItem> task = Task.Run<DriveItem>(async () => await Connection.Drive.Root.ItemWithPath(uploadPath).Content.Request().PutAsync<DriveItem>(stream));
-                var uploadedItem = task.Result;
-                return uploadedItem;
-            }
-            catch (Exception exception)
-            {
-                //PresentServiceException(exception);
-            }
-            return null;
-        }*/
+                CheckConnectionOrException(connection);
+
+                string folderPath = targetFolder;
+
+                var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(uploadFileName));
+
+                try
+                {
+                    var stream = new System.IO.FileStream(uploadFileName, System.IO.FileMode.Open);
+                    Task<Microsoft.Graph.DriveItem> task = Task.Run<DriveItem>(async () => await Connection.Drive.Root.ItemWithPath(uploadPath).Content.Request().PutAsync<DriveItem>(stream));
+                    var uploadedItem = task.Result;
+                    return uploadedItem;
+                }
+                catch (Exception exception)
+                {
+                    //PresentServiceException(exception);
+                }
+                return null;
+            }*/
 
         public static OneDriveResultWithData<DriveItem> UploadFilebyID(GraphServiceClient connection, string localFilePath, string fileName = null, string parentFolderId = null)
         {
@@ -261,8 +180,8 @@ namespace Decisions.MSOneDrive
             try
             {
                 var stream = new System.IO.FileStream(localFilePath, System.IO.FileMode.Open);
-                IDriveItemContentRequest request; 
-                if(String.IsNullOrEmpty(parentFolderId))
+                IDriveItemContentRequest request;
+                if (String.IsNullOrEmpty(parentFolderId))
                     request = connection.Drive.Root.ItemWithPath(fileName).Content.Request();
                 else
                     request = connection.Drive.Items[parentFolderId].ItemWithPath(fileName).Content.Request();
@@ -306,23 +225,11 @@ namespace Decisions.MSOneDrive
             return result;
         }
 
-        public static OneDriveBaseResult DeleteFilebyID(GraphServiceClient connection, string Id)
+        public static void DeleteFilebyID(GraphServiceClient connection, string Id)
         {
             CheckConnectionOrException(connection);
-
-            var result = new OneDriveBaseResult();
-            try
-            {
-                var t = connection.Drive.Items[Id].Request().DeleteAsync();
-                t.Wait();
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
-            return result;
+            var t = connection.Drive.Items[Id].Request().DeleteAsync();
+            t.Wait();
         }
 
         public static OneDriveResultWithData<Permission> CreateShareLink(GraphServiceClient connection, string resourceId, string Type = "view", string Scope = "anonymous")
@@ -354,7 +261,8 @@ namespace Decisions.MSOneDrive
                 var request = connection.Drive.Items[resourceId].Permissions.Request();
 
                 var permissions = new List<Permission>();
-                do {
+                do
+                {
                     var link = request.GetAsync().Result;
                     request = link.NextPageRequest;
                     permissions.AddRange(link);
