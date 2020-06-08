@@ -12,5 +12,8 @@ namespace Decisons.MSOneDrive.TestSuite
         public const string ClientOrAppId = "a4ff7c3c-d1e5-47eb-a654-e0038f637a52";// "7c35a746-a46f-4ad7-8413-c3243750e8bb";
 
         public const string FolderToDelete = "deleteme";
+        public static string LocalTestDir = @"C:\data\tmp\";
+        public static string TestFileName = "test.txt";
+        public static string TestFolderName = "_TestFolder_";
     }
 }
