@@ -19,7 +19,7 @@ namespace Decisions.MSOneDrive
 
         private static T ParseOneDriveEnum<T>(string textValue) where T : System.Enum
         {
-            if (typeof(T) is OneDrivePermissionRole)
+            if (typeof(T) == typeof(OneDrivePermissionRole))
             {
                 return (T)((System.Enum)roleDict[textValue.ToLower()]);
             }
@@ -124,7 +124,7 @@ namespace Decisions.MSOneDrive
         }
 
 
-        public static OneDriveResultWithData<OneDrivePermission[]> GetPermissionList(GraphServiceClient connection, string resourceId)
+        public static OneDriveResultWithData<OneDrivePermission[]> GetResourcePermissions(GraphServiceClient connection, string resourceId)
         {
             CheckConnectionOrException(connection);
 
@@ -142,7 +142,7 @@ namespace Decisions.MSOneDrive
             return result;
         }
 
-        public static OneDriveBaseResult DeletePermission(GraphServiceClient connection, string resourceId, string permissionId)
+        public static OneDriveBaseResult DeleteResourcePermission(GraphServiceClient connection, string resourceId, string permissionId)
         {
             CheckConnectionOrException(connection);
 

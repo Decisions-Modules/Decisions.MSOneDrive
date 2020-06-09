@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DecisionsFramework, Version=6.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DecisionsSDK.6.9.0\lib\DecisionsFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Graph, Version=3.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Graph.3.6.0\lib\net461\Microsoft.Graph.dll</HintPath>
     </Reference>
@@ -75,8 +78,19 @@
     <Compile Include="Data\OneDrivePermission.cs" />
     <Compile Include="Data\OneDriveResource.cs" />
     <Compile Include="Data\OneDriveResult.cs" />
+    <Compile Include="Steps\CreateFolder.cs" />
+    <Compile Include="Steps\CreateShareLink.cs" />
+    <Compile Include="Steps\DownloadFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\AbstractStep.cs" />
+    <Compile Include="Steps\DeleteResource.cs" />
+    <Compile Include="Steps\DoesResourceExist.cs" />
+    <Compile Include="Steps\GetFileList.cs" />
+    <Compile Include="Steps\GetFolderList.cs" />
+    <Compile Include="Steps\GetResourcePermission.cs" />
+    <Compile Include="Steps\UploadFile.cs" />
     <Compile Include="Utility\AuthenticationHelper.cs" />
+    <Compile Include="Steps\DeleteResourcePermission.cs" />
     <Compile Include="Utility\OneDriveFolders.cs" />
     <Compile Include="Utility\OneDrivePermission.cs" />
     <Compile Include="Utility\OneDriveUtility.cs" />
@@ -86,8 +100,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Steps\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

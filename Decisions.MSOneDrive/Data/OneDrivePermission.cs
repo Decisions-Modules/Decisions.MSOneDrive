@@ -70,7 +70,7 @@ namespace Decisions.MSOneDrive
         public OneDriveIdentity Application { get; set; }
 
         [DataMember]
-        public OneDriveShareType? Type { get; set; }
+        public OneDriveShareType Type { get; set; }
 
         [DataMember]
         public OneDriveShareScope? Scope { get; set; }

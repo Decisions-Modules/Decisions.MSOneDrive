@@ -200,10 +200,10 @@ namespace Decisons.MSOneDrive.TestSuite
             {
                 file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
 
-                var filePermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                var filePermissionsResult = OneDriveUtility.GetResourcePermissions(connection, file.Data.Id);
                 Assert.IsTrue(filePermissionsResult.IsSucceed);
 
-                var folderPermissionsResult = OneDriveUtility.GetPermissionList(connection, testFolder.Id);
+                var folderPermissionsResult = OneDriveUtility.GetResourcePermissions(connection, testFolder.Id);
                 Assert.IsTrue(filePermissionsResult.IsSucceed);
             }
             finally
@@ -222,7 +222,7 @@ namespace Decisons.MSOneDrive.TestSuite
             {
                 file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
 
-                var permissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                var permissionsResult = OneDriveUtility.GetResourcePermissions(connection, file.Data.Id);
                 Assert.IsTrue(permissionsResult.IsSucceed);
 
                 var sharePermissionResults = new List<OneDriveResultWithData<OneDrivePermission>>();
@@ -231,12 +231,14 @@ namespace Decisons.MSOneDrive.TestSuite
                     {
                         var r = OneDriveUtility.CreateShareLink(connection, file.Data.Id, t, s);
                         sharePermissionResults.Add(r);
-                        Assert.IsTrue(r.IsSucceed);
                     }
 
-                var newPermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                var newPermissionsResult = OneDriveUtility.GetResourcePermissions(connection, file.Data.Id);
                 Assert.IsTrue(newPermissionsResult.IsSucceed);
                 Assert.IsTrue(newPermissionsResult.Data.Length > permissionsResult.Data.Length);
+
+                foreach (OneDriveResultWithData<OneDrivePermission> r in sharePermissionResults)
+                  Assert.IsTrue(r.IsSucceed);
             }
             finally
             {
@@ -256,12 +258,12 @@ namespace Decisons.MSOneDrive.TestSuite
 
                 var newPermissionResult = OneDriveUtility.CreateShareLink(connection, file.Data.Id,OneDriveShareType.View, OneDriveShareScope.Anonymous);
 
-                var permissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                var permissionsResult = OneDriveUtility.GetResourcePermissions(connection, file.Data.Id);
 
-                var deleteResult=OneDriveUtility.DeletePermission(connection, file.Data.Id, newPermissionResult.Data.Id);
+                var deleteResult=OneDriveUtility.DeleteResourcePermission(connection, file.Data.Id, newPermissionResult.Data.Id);
                 Assert.IsTrue(deleteResult.IsSucceed);
 
-                var newPermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                var newPermissionsResult = OneDriveUtility.GetResourcePermissions(connection, file.Data.Id);
                 Assert.AreEqual(1, permissionsResult.Data.Length - newPermissionsResult.Data.Length);
             }
             finally
