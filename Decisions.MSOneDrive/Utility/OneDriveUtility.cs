@@ -100,52 +100,9 @@ namespace Decisions.MSOneDrive
             t.Wait();
         }
 
-        public static OneDriveResultWithData<Permission> CreateShareLink(GraphServiceClient connection, string resourceId, string Type = "view", string Scope = "anonymous")
-        {
-            CheckConnectionOrException(connection);
 
-            var result = new OneDriveResultWithData<Permission>();
-            try
-            {
-                var request = connection.Drive.Items[resourceId].CreateLink(Type, Scope).Request();
-                result.Data = request.PostAsync().Result;
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
-            return result;
 
-        }
 
-        public static OneDriveResultWithData<Permission[]> ListPermissions(GraphServiceClient connection, string resourceId)
-        {
-            CheckConnectionOrException(connection);
-            var result = new OneDriveResultWithData<Permission[]>();
-            try
-            {
-                var request = connection.Drive.Items[resourceId].Permissions.Request();
-
-                var permissions = new List<Permission>();
-                do
-                {
-                    var link = request.GetAsync().Result;
-                    request = link.NextPageRequest;
-                    permissions.AddRange(link);
-                } while (request != null);
-
-                result.Data = permissions.ToArray();
-                result.IsSucceed = true;
-            }
-            catch (Exception exception)
-            {
-                if (!result.FillFromException(exception))
-                    throw;
-            }
-            return result;
-        }
 
         public static OneDriveResultWithData<OneDriveResourceType> DoesResourceExist(GraphServiceClient connection, string fileOrFolderId)
         {

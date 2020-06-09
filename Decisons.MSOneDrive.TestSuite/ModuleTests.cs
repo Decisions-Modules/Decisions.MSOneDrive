@@ -88,7 +88,6 @@ namespace Decisons.MSOneDrive.TestSuite
                     OneDriveUtility.DeleteResource(connection, it.Id);
                 }
             }
-
         }
 
         [TestMethod]
@@ -131,11 +130,11 @@ namespace Decisons.MSOneDrive.TestSuite
             {
                 var file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
 
-                var folderRes = OneDriveUtility.DoesResourceExist(connection, testFolder.Id);
-                Assert.AreEqual(OneDriveResourceType.Folder, folderRes.Data);
-
                 var fileRes = OneDriveUtility.DoesResourceExist(connection, file.Data.Id);
                 Assert.AreEqual(OneDriveResourceType.File, fileRes.Data);
+
+                var folderRes = OneDriveUtility.DoesResourceExist(connection, testFolder.Id);
+                Assert.AreEqual(OneDriveResourceType.Folder, folderRes.Data);
 
                 OneDriveUtility.DeleteResource(connection, file.Data.Id);
                 var invalidFolderRes = OneDriveUtility.DoesResourceExist(connection, file.Data.Id);
@@ -164,9 +163,9 @@ namespace Decisons.MSOneDrive.TestSuite
                 Assert.IsTrue(file.IsSucceed);
             }
             finally {
-                if (fileInRoot != null && fileInRoot.IsSucceed)
+                if (fileInRoot?.Data != null )
                     OneDriveUtility.DeleteResource(connection, fileInRoot.Data.Id);
-                if (file != null && file.IsSucceed)
+                if (file?.Data != null)
                     OneDriveUtility.DeleteResource(connection, file.Data.Id);
             }
         }
@@ -190,6 +189,87 @@ namespace Decisons.MSOneDrive.TestSuite
                 if (file != null && file.IsSucceed)
                     OneDriveUtility.DeleteResource(connection, file.Data.Id);
             }
+        }
+
+
+        [TestMethod]
+        public void GetPermisionTest()
+        {
+            OneDriveResultWithData<OneDriveFile> file = null;
+            try
+            {
+                file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
+
+                var filePermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                Assert.IsTrue(filePermissionsResult.IsSucceed);
+
+                var folderPermissionsResult = OneDriveUtility.GetPermissionList(connection, testFolder.Id);
+                Assert.IsTrue(filePermissionsResult.IsSucceed);
+            }
+            finally
+            {
+                if (file?.Data != null)
+                    OneDriveUtility.DeleteResource(connection, file.Data.Id);
+            }
+
+        }
+
+        [TestMethod]
+        public void ShareLinkTest()
+        {
+            OneDriveResultWithData<OneDriveFile> file = null;
+            try
+            {
+                file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
+
+                var permissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                Assert.IsTrue(permissionsResult.IsSucceed);
+
+                var sharePermissionResults = new List<OneDriveResultWithData<OneDrivePermission>>();
+                foreach (OneDriveShareType t in (OneDriveShareType[])Enum.GetValues(typeof(OneDriveShareType)))
+                    foreach (OneDriveShareScope s in (OneDriveShareScope[])Enum.GetValues(typeof(OneDriveShareScope)))
+                    {
+                        var r = OneDriveUtility.CreateShareLink(connection, file.Data.Id, t, s);
+                        sharePermissionResults.Add(r);
+                        Assert.IsTrue(r.IsSucceed);
+                    }
+
+                var newPermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                Assert.IsTrue(newPermissionsResult.IsSucceed);
+                Assert.IsTrue(newPermissionsResult.Data.Length > permissionsResult.Data.Length);
+            }
+            finally
+            {
+                if (file != null && file.IsSucceed)
+                    OneDriveUtility.DeleteResource(connection, file.Data.Id);
+            }
+
+        }
+
+        [TestMethod]
+        public void DeletePermissionTest()
+        {
+            OneDriveResultWithData<OneDriveFile> file = null;
+            try
+            {
+                file = OneDriveUtility.UploadFile(connection, TestFileFullName, null, testFolder.Id);
+
+                var newPermissionResult = OneDriveUtility.CreateShareLink(connection, file.Data.Id,OneDriveShareType.View, OneDriveShareScope.Anonymous);
+
+                var permissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+
+                var deleteResult=OneDriveUtility.DeletePermission(connection, file.Data.Id, newPermissionResult.Data.Id);
+                Assert.IsTrue(deleteResult.IsSucceed);
+
+                var newPermissionsResult = OneDriveUtility.GetPermissionList(connection, file.Data.Id);
+                Assert.AreEqual(1, permissionsResult.Data.Length - newPermissionsResult.Data.Length);
+            }
+            finally
+            {
+                if (file?.Data != null )
+                    OneDriveUtility.DeleteResource(connection, file.Data.Id);
+            }
+
         }
     }
 }
