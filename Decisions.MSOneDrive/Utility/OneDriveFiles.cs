@@ -88,7 +88,8 @@ namespace Decisions.MSOneDrive
             return result;
         }
 
-        public static OneDriveBaseResult DownloadFile(GraphServiceClient connection, string fileId, string localFilePath) {
+        public static OneDriveBaseResult DownloadFile(GraphServiceClient connection, string fileId, string localFilePath)
+        {
             CheckConnectionOrException(connection);
 
             return ProcessRequest(() =>

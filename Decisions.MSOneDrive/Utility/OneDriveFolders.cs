@@ -43,7 +43,7 @@ namespace Decisions.MSOneDrive
 
             IDriveItemChildrenCollectionRequest request;
             if (parentFolderId == null)
-                request = connection.Drive.Root.Children.Request(); //connection.Me.Drive.Root.Children.Request();
+                request = connection.Drive.Root.Children.Request();
             else
                 request = connection.Drive.Items[parentFolderId].Children.Request();
 

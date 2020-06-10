@@ -13,7 +13,7 @@ namespace Decisions.MSOneDrive
 {
     [AutoRegisterStep("Get Folder List", MsOneDriveCategory)]
     [Writable]
-    class GetFolderList:AbstractStep
+    class GetFolderList : AbstractStep
     {
         [PropertyHidden]
         public override DataDescription[] InputData

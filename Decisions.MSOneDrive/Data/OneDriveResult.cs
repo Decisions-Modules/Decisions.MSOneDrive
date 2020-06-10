@@ -27,9 +27,9 @@ namespace Decisions.MSOneDrive
             IsSucceed = false;
             ErrorInfo = new OneDriveErrorInfo();
             if (exception is AggregateException)
-            { 
+            {
                 var ex = (AggregateException)exception;
-                if (ex.InnerExceptions.Count==1 && ex.InnerException is ServiceException)
+                if (ex.InnerExceptions.Count == 1 && ex.InnerException is ServiceException)
                     exception = ex.InnerException;
             };
 

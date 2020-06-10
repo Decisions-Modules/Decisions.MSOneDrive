@@ -13,7 +13,7 @@ namespace Decisions.MSOneDrive
 {
     [AutoRegisterStep("Delete Resource Permission", MsOneDriveCategory)]
     [Writable]
-    class DeleteResourcePermission:AbstractStep
+    class DeleteResourcePermission : AbstractStep
     {
         [PropertyHidden]
         public override DataDescription[] InputData

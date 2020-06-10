@@ -1,10 +1,14 @@
 ﻿using Decisions.OAuth;
+using DecisionsFramework;
+using DecisionsFramework.Data.ORMapper;
 using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 using DecisionsFramework.Design.Flow;
 using DecisionsFramework.Design.Flow.Mapping;
 using DecisionsFramework.Design.Properties;
 using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer.Services.ContextData;
+using DecisionsFramework.ServiceLayer.Services.OAuth2;
+using DecisionsFramework.Utilities.Data;
 using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
@@ -36,9 +40,6 @@ namespace Decisions.MSOneDrive
         protected const string TYPE_OF_LINK = "Type Of Link";
         protected const string SCOPE_OF_LINK = "Scope of Link";
 
-        /*OAuth2TokenResponse resp;
-        OAuthToken token*/
-
         protected static T[] Concat<T>(T[] array, params T[] newItems)
         {
             var res = new List<T>(array);
@@ -66,15 +67,25 @@ namespace Decisions.MSOneDrive
             }
         }
 
-        [EntityPickerEditor(new Type[] { typeof(OAuthToken) }, "MS OneDrive Token")]
-        //[TokenPicker]
-        public string AccessToken { get; set; }
+        //[EntityPickerEditor(new Type[] { typeof(OAuthToken) }, "MS OneDrive Token")]
+        [TokenPicker]
+        [WritableValue]
+        public string Token { get; set; }
 
+        private string FindAccessToken(string id)
+        {
+            ORM<OAuthToken> orm = new ORM<OAuthToken>();
+            var token = orm.Fetch(id);
+            if (token != null)
+                return token.TokenData;
+            throw new BusinessRuleException($"Can not find token with TokenId=\"{id}\"");
+        }
         public ResultData Run(StepStartData data)
         {
             try
             {
-                GraphServiceClient connection = AuthenticationHelper.GetAuthenticatedClient(AccessToken);
+                var accessToken = FindAccessToken(Token);
+                GraphServiceClient connection = AuthenticationHelper.GetAuthenticatedClient(accessToken);
                 OneDriveBaseResult res = ExecuteStep(connection, data);
 
                 if (res.IsSucceed)
@@ -96,7 +107,6 @@ namespace Decisions.MSOneDrive
             {
                 OneDriveErrorInfo ErrInfo = new OneDriveErrorInfo() { ErrorMessage = ex.ToString(), HttpErrorCode = null };
                 return new ResultData(ERROR_OUTCOME, new DataPair[] { new DataPair(ERROR_OUTCOME_DATA_NAME, ErrInfo) });
-                //throw new LoggedException("Error running step", ex);
             }
         }
 

@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace Decisions.MSOneDrive
 {
-    //https://docs.microsoft.com/en-us/onedrive/developer/rest-api/resources/permission?view=odsp-graph-online
+    // read more of the following data clases
+    // https://docs.microsoft.com/en-us/onedrive/developer/rest-api/resources/permission?view=odsp-graph-online
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum OneDrivePermissionRole { Read, Write, SharePointOwner, SharePointMember }; // read, write, sp.owner, sp.member
@@ -20,7 +21,7 @@ namespace Decisions.MSOneDrive
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum OneDriveShareScope { Anonymous, Organization };
-    
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum OneDriveDriveType { Personal, Business, DocumentLibrary };
 
@@ -105,9 +106,9 @@ namespace Decisions.MSOneDrive
 
         [DataMember]
         public string WebId { get; set; }
-}
+    }
 
-[DataContract]
+    [DataContract]
     public class OneDriveItemReference
     {
         [DataMember]

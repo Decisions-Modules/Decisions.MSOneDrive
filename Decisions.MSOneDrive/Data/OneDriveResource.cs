@@ -40,14 +40,14 @@ namespace Decisions.MSOneDrive
     [DataContract]
     public class OneDriveFile : OneDriveResource
     {
-        internal OneDriveFile(string id, string name, string desc, string link) : base(id, name, desc, link){ }
+        internal OneDriveFile(string id, string name, string desc, string link) : base(id, name, desc, link) { }
         internal OneDriveFile(DriveItem driveItem) : base(driveItem) { }
     }
 
     [DataContract]
     public class OneDriveFolder : OneDriveResource
     {
-        internal OneDriveFolder(string id, string name, string desc, string link) : base(id, name, desc, link) {}
+        internal OneDriveFolder(string id, string name, string desc, string link) : base(id, name, desc, link) { }
         internal OneDriveFolder(DriveItem driveItem) : base(driveItem) { }
     }
 

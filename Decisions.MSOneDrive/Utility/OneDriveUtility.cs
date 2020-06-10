@@ -100,10 +100,6 @@ namespace Decisions.MSOneDrive
             t.Wait();
         }
 
-
-
-
-
         public static OneDriveResultWithData<OneDriveResourceType> DoesResourceExist(GraphServiceClient connection, string fileOrFolderId)
         {
             CheckConnectionOrException(connection);
