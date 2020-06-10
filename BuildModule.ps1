@@ -147,8 +147,6 @@ Write-Output "Module.Modified.xml should now exist with correct paths.  Please c
 Write-Output "Compiling Project by build.proj, or by .sln file."
 $compiletarget = GetCompileTarget $basepath
 
-CopyModule($basePath)
-
 Start-Process -Wait -FilePath "$msbuild" -Args "$compiletarget" -WorkingDirectory "." -RedirectStandardOutput "BuildModule.ps1.log" -RedirectStandardError "BuildModule.ps1.error" 
 
 CopyModule($basePath)
