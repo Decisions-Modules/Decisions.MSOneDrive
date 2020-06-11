@@ -40,14 +40,6 @@ namespace Decisions.MSOneDrive
         protected const string TYPE_OF_LINK = "Type Of Link";
         protected const string SCOPE_OF_LINK = "Scope of Link";
 
-        protected static T[] Concat<T>(T[] array, params T[] newItems)
-        {
-            var res = new List<T>(array);
-            res.AddRange(newItems);
-            T[] resArr = res.ToArray();
-            return resArr;
-        }
-
         [PropertyHidden]
         public virtual DataDescription[] InputData
         {
@@ -67,7 +59,6 @@ namespace Decisions.MSOneDrive
             }
         }
 
-        //[EntityPickerEditor(new Type[] { typeof(OAuthToken) }, "MS OneDrive Token")]
         [TokenPicker]
         [WritableValue]
         public string Token { get; set; }
@@ -78,7 +69,7 @@ namespace Decisions.MSOneDrive
             var token = orm.Fetch(id);
             if (token != null)
                 return token.TokenData;
-            throw new BusinessRuleException($"Can not find token with TokenId=\"{id}\"");
+            throw new EntityNotFoundException($"Can not find token with TokenId=\"{id}\"");
         }
         public ResultData Run(StepStartData data)
         {

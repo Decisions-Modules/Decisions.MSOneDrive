@@ -3,6 +3,8 @@ using DecisionsFramework.Design.Flow;
 using DecisionsFramework.Design.Flow.Mapping;
 using DecisionsFramework.Design.Properties;
 using Microsoft.Graph;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Decisions.MSOneDrive
 {
@@ -15,16 +17,16 @@ namespace Decisions.MSOneDrive
         {
             get
             {
-                return Concat(base.InputData,
-                    new DataDescription(typeof(string), PARENT_FOLDER_ID),
-                    new DataDescription(typeof(string), NEW_FOLDER_NAME));
+                var data = new DataDescription[] { new DataDescription(typeof(string), PARENT_FOLDER_ID), new DataDescription(typeof(string), NEW_FOLDER_NAME) };
+                return base.InputData.Concat(data).ToArray();
             }
         }
         public override OutcomeScenarioData[] OutcomeScenarios
         {
             get
             {
-                return Concat(base.OutcomeScenarios, new OutcomeScenarioData(RESULT_OUTCOME, new DataDescription(typeof(OneDriveFolder), RESULT)));
+                var data = new OutcomeScenarioData[] { new OutcomeScenarioData(RESULT_OUTCOME, new DataDescription(typeof(OneDriveFolder), RESULT)) };
+                return base.OutcomeScenarios.Concat(data).ToArray();
             }
         }
 

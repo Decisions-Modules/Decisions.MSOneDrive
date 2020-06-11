@@ -90,7 +90,7 @@ if (!$framework) {
 	}
 }
 
-function RestartHostManager {
+function StopHostManager {
 	$local:service = (get-service "servicehostmanager");
 	$local:serviceWatcher = (get-service "servicehostmanagerwatcher")
 
@@ -103,8 +103,9 @@ function RestartHostManager {
 
 	Write-Output "stopping SHM..."
 	do { $local:service.refresh(); sleep 1; } until ($local:service.status -eq "Stopped")
-
-
+}
+function StartHostManager {
+	$local:service = (get-service "servicehostmanager");
 	Write-Output "starting SHM..."
 	$local:service.Start()
 
@@ -149,5 +150,7 @@ $compiletarget = GetCompileTarget $basepath
 
 Start-Process -Wait -FilePath "$msbuild" -Args "$compiletarget" -WorkingDirectory "." -RedirectStandardOutput "BuildModule.ps1.log" -RedirectStandardError "BuildModule.ps1.error" 
 
+StopHostManager
 CopyModule($basePath)
-RestartHostManager
+StartHostManager
+

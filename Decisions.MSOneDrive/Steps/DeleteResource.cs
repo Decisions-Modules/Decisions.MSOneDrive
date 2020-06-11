@@ -20,14 +20,16 @@ namespace Decisions.MSOneDrive
         {
             get
             {
-                return Concat(base.InputData, new DataDescription(typeof(string), FILE_OR_FOLDER_ID));
+                var data = new DataDescription[] { new DataDescription(typeof(string), FILE_OR_FOLDER_ID) };
+                return base.InputData.Concat(data).ToArray();
             }
         }
         public override OutcomeScenarioData[] OutcomeScenarios
         {
             get
             {
-                return Concat(base.OutcomeScenarios, new OutcomeScenarioData(DONE_OUTCOME));
+                var data = new OutcomeScenarioData[] { new OutcomeScenarioData(DONE_OUTCOME) };
+                return base.OutcomeScenarios.Concat(data).ToArray();
             }
         }
 
