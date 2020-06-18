@@ -58,7 +58,7 @@ function FindFrameworkFiles {
     } catch {}
     if (!$firstRes)
     {
-        $firstRes = (Get-ChildItem -Path "c:\Program Files\Decisions\Decisions Services Manager" -Include "DecisionsFramework.Net.dll" -Recurse -ErrorAction SilentlyContinue | Where-Object { ($_.PSIsContainer -eq $false) -and  ( $_.Name -like "*$fileName*") })[0].DirectoryName
+        $firstRes = (Get-ChildItem -Path "${Env:ProgramFiles}\Decisions\Decisions Services Manager" -Include "DecisionsFramework.Net.dll" -Recurse -ErrorAction SilentlyContinue | Where-Object { ($_.PSIsContainer -eq $false) -and  ( $_.Name -like "*$fileName*") })[0].DirectoryName
     }
     return $firstRes
 }
@@ -81,8 +81,7 @@ function GetCompileTarget($basePath) {
     if (Test-Path -PathType leaf -LiteralPath $guess ) {
         return $guess
     }
-    Write-Output "Could not find a build.proj file, please create one."
-    exit
+    throw "Could not find a build.proj file, please create one."
 }
 
 
@@ -133,9 +132,19 @@ function CopyModule($basePath)
 {
     $local:moduleName = FindModuleName("$basePath\build.proj")
     $local:fullModuleName = "$basePath\$local:moduleName.zip"
-    $local:destination  = "C:\Program Files\Decisions\Decisions Services Manager\CustomModules\$local:moduleName.zip"
+    $local:destination  = "${Env:ProgramFiles}\Decisions\Decisions Services Manager\CustomModules\$local:moduleName.zip"
 
+    Write-Output "Copying module..."
     Copy-Item $local:fullModuleName $local:destination
+}
+
+function FindSolutionFile($basePath) {
+    $local:filelist = Get-ChildItem -Path "$basePath\*.sln"
+    if($local:filelist.Length -eq 0)
+    {
+        throw "Can not find *.sln file"
+    }
+    return $local:filelist[0].FullName
 }
 
 if ($msbuild) {
@@ -171,8 +180,15 @@ Write-Output "Module.Modified.xml should now exist with correct paths.  Please c
 Write-Output "Compiling Project by build.proj, or by .sln file."
 $compiletarget = GetCompileTarget $basepath
 
-Start-Process -Wait -FilePath "$msbuild" -Args "$compiletarget" -WorkingDirectory "." -RedirectStandardOutput "BuildModule.ps1.log" -RedirectStandardError "BuildModule.ps1.error"
+$solution = FindSolutionFile($basePath)
+& $msbuild -t:restore $solution
+& $msbuild $compiletarget
+if ($LastExitCode -ne 0)
+{
+   throw "Compile failed with the return code: $LastExitCode"
+}
 
 StopHostManager
 CopyModule($basePath)
 StartHostManager
+
