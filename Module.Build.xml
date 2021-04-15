@@ -1,46 +1,19 @@
 <?xml version="1.0"?>
 <CreateModuleInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Clients>
-    <DotNetCoreDll>.\packages\DecisionsSDK.6.8.0\lib\CoreServicesClients.Net.dll</DotNetCoreDll>
-    <DotNetFrontendFrameworkDll>.\packages\DecisionsSDK.6.8.0\lib\DecisionsFramework.Net.dll</DotNetFrontendFrameworkDll>
-    <SLCoreDll></SLCoreDll>
-    <SLFrontendFrameworkDll></SLFrontendFrameworkDll>
-    <SilverLightsSDKAssembliesPath></SilverLightsSDKAssembliesPath>
-    <CopyReferenceToModule>true</CopyReferenceToModule>
-	<References>
-      <string>.\Decisions.MSOneDrive\bin\Debug\Microsoft.Graph.Core.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\Microsoft.Graph.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\System.Buffers.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\System.Diagnostics.DiagnosticSource.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\System.Memory.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\System.Numerics.Vectors.dll</string>
-      <string>.\Decisions.MSOneDrive\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll</string>
-
-	</References>
-  </Clients>
-  <Resources NoComponents="true">
-    <ServicesDlls>
-      <string>.\Decisions.MSOneDrive\bin\Debug\Decisions.MSOneDrive.dll</string>
-    </ServicesDlls>
-    <CliDlls/>
-    <WebPages/>
-	<MvcViews>
-	</MvcViews>
-	<MvcDlls>
-	</MvcDlls>
-    <AgentDlls>
-    </AgentDlls>
-    <InstallScript>
-    </InstallScript>
-    <SqlScripts />
-    <ObjectsToImport></ObjectsToImport>
-    <MsSqlScript>
-    </MsSqlScript>
-    <MySqlScript>
-    </MySqlScript>
-    <OracleScript>
-    </OracleScript>
-    <FileResources>    </FileResources>
-  </Resources>
+	<Resources NoComponents="true">
+		<CoreServicesDlls>
+		  <string>.\Decisions.MSOneDrive\obj\Debug\net5.0\win-x64\Decisions.MSOneDrive.dll</string>
+		</CoreServicesDlls>
+		<CliDlls/>
+		<WebPages/>
+		<SilverlightDlls/>
+		<AgentDlls/>
+		<InstallScript/>
+		<SqlScripts/>
+		<ObjectsToImport/>
+		<MsSqlScript/>
+	</Resources>
+	<Version/>
+	<ImagePath>./image.png</ImagePath>
   <Description>Module to manage files and folders in MS OneDrive.</Description>
 </CreateModuleInfo>
