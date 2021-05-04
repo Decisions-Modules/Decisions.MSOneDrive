@@ -2,11 +2,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Decisons.MSOneDrive.TestSuite")]
+[assembly: AssemblyTitle("Decisions.MSOneDrive.TestSuite")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Decisons.MSOneDrive.TestSuite")]
+[assembly: AssemblyProduct("Decisions.MSOneDrive.TestSuite")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
