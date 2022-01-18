@@ -3,11 +3,11 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DecisionsSDK" Version="7.2.4" />
+    <PackageReference Include="DecisionsSDK" Version="7.10.0-beta" />
     <PackageReference Include="Microsoft.Graph" Version="3.29.0" />
   </ItemGroup>
 </Project>

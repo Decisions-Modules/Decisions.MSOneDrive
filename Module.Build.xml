@@ -2,7 +2,7 @@
 <CreateModuleInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Resources NoComponents="true">
 		<CoreServicesDlls>
-		  <string>.\Decisions.MSOneDrive\obj\Debug\net5.0\win-x64\Decisions.MSOneDrive.dll</string>
+		  <string>.\Decisions.MSOneDrive\obj\Debug\net6.0\win-x64\Decisions.MSOneDrive.dll</string>
 		</CoreServicesDlls>
 		<CliDlls/>
 		<WebPages/>
@@ -13,7 +13,7 @@
 		<ObjectsToImport/>
 		<MsSqlScript/>
 	</Resources>
-	<Version/>
+	<Version>7.10</Version>
 	<ImagePath>./image.png</ImagePath>
   <Description>Module to manage files and folders in MS OneDrive.</Description>
 </CreateModuleInfo>
