@@ -7,7 +7,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DecisionsSDK" Version="7.10.1" />
+    <PackageReference Include="DecisionsSDK" Version="8.0.0-beta" />
     <PackageReference Include="Microsoft.Graph" Version="3.29.0" />
   </ItemGroup>
 </Project>
