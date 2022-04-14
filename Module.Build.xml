@@ -17,7 +17,7 @@
 		<ObjectsToImport/>
 		<MsSqlScript/>
 	</Resources>
-	<Version>7.10</Version>
+	<Version>7.10.1</Version>
 	<ImagePath>./image.png</ImagePath>
   <Description>Module to manage files and folders in MS OneDrive.</Description>
 </CreateModuleInfo>
