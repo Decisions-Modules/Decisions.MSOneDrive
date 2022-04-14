@@ -4,6 +4,10 @@
 		<CoreServicesDlls>
 		  <string>.\Decisions.MSOneDrive\obj\Debug\net6.0\win-x64\Decisions.MSOneDrive.dll</string>
 		</CoreServicesDlls>
+		<ReferenceDlls>
+			<string>.\Decisions.MSOneDrive\obj\Microsoft.Graph.Core.dll</string>
+			<string>.\Decisions.MSOneDrive\obj\Microsoft.Graph.dll</string>
+		</ReferenceDlls>
 		<CliDlls/>
 		<WebPages/>
 		<SilverlightDlls/>
