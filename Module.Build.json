@@ -1,0 +1,24 @@
+{
+    "Resources": {
+		"NoComponents": true,
+        "CoreServicesDlls": [
+			"./Decisions.MSOneDrive/obj/Decisions.MSOneDrive.dll"
+	    ],
+		"ReferenceDlls":
+        [
+          "./Decisions.MSOneDrive/obj/Microsoft.Graph.Core.dll",
+          "./Decisions.MSOneDrive/obj/Microsoft.Graph.dll"
+        ],
+		"CliDlls": null,
+		"WebPages": null,
+		"SilverlightDlls": null,
+		"AgentDlls": null,
+		"InstallScript": null,
+		"SqlScripts": null,
+		"ObjectsToImport": null,
+		"MsSqlScript": null
+    },
+    "Version": "8.15.0",
+    "ImagePath": "./image.png",
+    "Description": "Module to manage files and folders in MS OneDrive."
+}
