@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Decisions.MSOneDrive
 {
@@ -22,8 +21,6 @@ namespace Decisions.MSOneDrive
 
     public static partial class OneDriveUtility
     {
-
-
         private static void CheckConnectionOrException(GraphServiceClient connection)
         {
             if (connection == null)
@@ -92,7 +89,7 @@ namespace Decisions.MSOneDrive
 
         }
 
-        private static void DeleteResourceByID(GraphServiceClient connection, string Id)
+        private static void DeleteResourceById(GraphServiceClient connection, string Id)
         {
             CheckConnectionOrException(connection);
             var t = connection.Drive.Items[Id].Request().DeleteAsync();
@@ -104,11 +101,11 @@ namespace Decisions.MSOneDrive
             CheckConnectionOrException(connection);
             OneDriveResultWithData<OneDriveResourceType> result = ProcessRequest(() =>
             {
-                DriveItem item = OneDriveUtility.GetResourceInfo(connection, fileOrFolderId);
+                DriveItem item = GetResourceInfo(connection, fileOrFolderId);
                 if (item.Folder != null)
                     return OneDriveResourceType.Folder;
-                else
-                    return OneDriveResourceType.File;
+                
+                return OneDriveResourceType.File;
             });
 
             if (!result.IsSucceed && result.ErrorInfo.HttpErrorCode == HttpStatusCode.NotFound)
@@ -124,7 +121,7 @@ namespace Decisions.MSOneDrive
             CheckConnectionOrException(connection);
             return ProcessRequest(() =>
             {
-                OneDriveUtility.DeleteResourceByID(connection, fileOrFolderId);
+                DeleteResourceById(connection, fileOrFolderId);
             });
         }
     }

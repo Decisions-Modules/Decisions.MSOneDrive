@@ -18,7 +18,7 @@
 		"ObjectsToImport": null,
 		"MsSqlScript": null
     },
-    "Version": "8.15.0",
+    "Version": "8.19.0",
     "ImagePath": "./image.png",
     "Description": "Module to manage files and folders in MS OneDrive."
 }

@@ -1,5 +1,4 @@
 ﻿using Decisions.OAuth;
-using DecisionsFramework;
 using DecisionsFramework.Data.ORMapper;
 using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 using DecisionsFramework.Design.Flow;
@@ -7,14 +6,8 @@ using DecisionsFramework.Design.Flow.Mapping;
 using DecisionsFramework.Design.Properties;
 using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer.Services.ContextData;
-using DecisionsFramework.ServiceLayer.Services.OAuth2;
-using DecisionsFramework.Utilities.Data;
 using Microsoft.Graph;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Decisions.MSOneDrive
 {
@@ -34,6 +27,8 @@ namespace Decisions.MSOneDrive
         protected const string PERMISSION_ID = "Permission Id";
         protected const string PARENT_FOLDER_ID = "Parent Folder Id";
         protected const string LOCAL_FILE_PATH = "Local File Path";
+        protected const string FILE_REFERENCE = "File Reference";
+        protected const string FILE_DATA = "File Data";
         protected const string PERMISSION = "Permission";
         protected const string NEW_FOLDER_NAME = "New Folder Name";
 
@@ -61,6 +56,7 @@ namespace Decisions.MSOneDrive
 
         [TokenPicker]
         [WritableValue]
+        [PropertyClassification(0, "Token", "Settings")]
         public string Token { get; set; }
 
         private string FindAccessToken(string id)
@@ -78,7 +74,7 @@ namespace Decisions.MSOneDrive
                 var accessToken = FindAccessToken(Token);
                 GraphServiceClient connection = AuthenticationHelper.GetAuthenticatedClient(accessToken);
                 OneDriveBaseResult res = ExecuteStep(connection, data);
-
+                
                 if (res.IsSucceed)
                 {
                     var outputData = OutcomeScenarios[RESULT_OUTCOME_INDEX].OutputData;
@@ -86,18 +82,21 @@ namespace Decisions.MSOneDrive
 
                     if (outputData != null && outputData.Length > 0)
                         return new ResultData(exitPointName, new DataPair[] { new DataPair(outputData[0].Name, res.DataObj) });
-                    else
-                        return new ResultData(exitPointName);
+                    
+                    return new ResultData(exitPointName);
                 }
-                else
-                {
-                    return new ResultData(ERROR_OUTCOME, new DataPair[] { new DataPair(ERROR_OUTCOME_DATA_NAME, res.ErrorInfo) });
-                }
+
+                return new ResultData(ERROR_OUTCOME, new DataPair[] { new DataPair(ERROR_OUTCOME_DATA_NAME, res.ErrorInfo) });
             }
             catch (Exception ex)
             {
-                OneDriveErrorInfo ErrInfo = new OneDriveErrorInfo() { ErrorMessage = ex.ToString(), HttpErrorCode = null };
-                return new ResultData(ERROR_OUTCOME, new DataPair[] { new DataPair(ERROR_OUTCOME_DATA_NAME, ErrInfo) });
+                OneDriveErrorInfo errInfo = new OneDriveErrorInfo()
+                {
+                    ErrorMessage = ex.ToString(), 
+                    HttpErrorCode = null
+                };
+                
+                return new ResultData(ERROR_OUTCOME, new DataPair[] { new DataPair(ERROR_OUTCOME_DATA_NAME, errInfo) });
             }
         }
 
