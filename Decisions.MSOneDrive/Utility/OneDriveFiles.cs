@@ -1,25 +1,25 @@
 ﻿using Microsoft.Graph;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Decisions.MSOneDrive
 {
     public static partial class OneDriveUtility
     {
-        private static DriveItem UploadFileByID(GraphServiceClient connection, string localFilePath, string fileName = null, string parentFolderId = null)
+        private static DriveItem UploadFileById(GraphServiceClient connection, string localFilePath, 
+            string fileName = null, string parentFolderId = null)
         {
             CheckConnectionOrException(connection);
 
             if (string.IsNullOrEmpty(localFilePath))
+            {
                 throw new ArgumentNullException("localFilePath", "localFilePath cannot be null or empty.");
+            }
 
-            if (fileName == null)
-                fileName = System.IO.Path.GetFileName(localFilePath);
-
+            fileName ??= Path.GetFileName(localFilePath);
+            
             var stream = new System.IO.FileStream(localFilePath, System.IO.FileMode.Open);
             try
             {
@@ -30,7 +30,7 @@ namespace Decisions.MSOneDrive
                     request = connection.Drive.Items[parentFolderId].ItemWithPath(fileName).Content.Request();
 
                 var uploadedItem = request.PutAsync<DriveItem>(stream).Result;
-
+                
                 return uploadedItem;
             }
             finally
@@ -75,13 +75,14 @@ namespace Decisions.MSOneDrive
             return result;
         }
 
-        public static OneDriveResultWithData<OneDriveFile> UploadFile(GraphServiceClient connection, string localFilePath, string fileName = null, string parentFolderId = null)
+        public static OneDriveResultWithData<OneDriveFile> UploadFile(GraphServiceClient connection, string localFilePath, 
+            string fileName = null, string parentFolderId = null, bool usingFullFilePath = false)
         {
             CheckConnectionOrException(connection);
-
+            
             OneDriveResultWithData<OneDriveFile> result = ProcessRequest(() =>
             {
-                DriveItem item = UploadFileByID(connection, localFilePath, fileName, parentFolderId);
+                DriveItem item = UploadFileById(connection, localFilePath, fileName, parentFolderId);
                 return new OneDriveFile(item);
             });
 
