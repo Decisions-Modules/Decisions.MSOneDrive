@@ -8,11 +8,12 @@ using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer.Services.ContextData;
 using Microsoft.Graph;
 using System;
+using DecisionsFramework.Design.Flow.Interface;
 
 namespace Decisions.MSOneDrive
 {
     [Writable]
-    public abstract class AbstractStep : ISyncStep, IDataConsumer, IDataProducer
+    public abstract class AbstractStep : ISyncStep, IDataConsumer, IDataProducer, IEntityPickerLocation, IFlowAwareStep
     {
         public const string MsOneDriveCategory = "Integration/MS OneDrive";
 
@@ -67,6 +68,16 @@ namespace Decisions.MSOneDrive
                 return token.TokenData;
             throw new EntityNotFoundException($"Can not find token with TokenId=\"{id}\"");
         }
+        
+        [PropertyHidden(true)] 
+        public Flow Flow { get; set; }
+        
+        [PropertyHidden(true)] 
+        public FlowStep FlowStep { get; set; }
+        
+        [PropertyHidden(true)] 
+        public string EntityPickerFolderId => Flow?.EntityFolderID;
+
         public ResultData Run(StepStartData data)
         {
             try
@@ -101,7 +112,6 @@ namespace Decisions.MSOneDrive
         }
 
         protected abstract OneDriveBaseResult ExecuteStep(GraphServiceClient connection, StepStartData data);
-
     }
 }
 
