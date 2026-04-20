@@ -1,4 +1,4 @@
-{
+﻿{
     "Resources": {
 		"NoComponents": true,
         "CoreServicesDlls": [
@@ -18,7 +18,7 @@
 		"ObjectsToImport": null,
 		"MsSqlScript": null
     },
-    "Version": "9.12.0",
+    "Version": "10.0.0",
     "ImagePath": "./image.png",
     "Description": "Module to manage files and folders in MS OneDrive."
 }
